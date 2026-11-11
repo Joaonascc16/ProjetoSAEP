@@ -55,19 +55,6 @@ public class ProdutoController {
         }
 
         boolean novoProduto = produto.getId() == null;
-        if (!novoProduto) {
-            ProdutoEntity produtoExistente = produtoService.buscarPorId(produto.getId()).orElse(null);
-            if (produtoExistente == null) {
-                model.addAttribute("erro", "Produto não encontrado para atualização.");
-                model.addAttribute("produtos", produtoService.listarTodos());
-                model.addAttribute("produto", produto);
-                model.addAttribute("usuario", usuarioDaSessao(session));
-                return "cadastro-produto";
-            }
-
-            // O saldo só pode ser alterado pelo fluxo de movimentações, que gera histórico.
-            produto.setQuantidade(produtoExistente.getQuantidade());
-        }
 
         String erroValidacao = validarProduto(produto);
         if (erroValidacao != null) {
@@ -78,7 +65,15 @@ public class ProdutoController {
             return "cadastro-produto";
         }
 
-        produtoService.salvar(produto);
+        if (novoProduto) {
+            produtoService.salvar(produto);
+        } else if (!produtoService.atualizarDados(produto)) {
+            model.addAttribute("erro", "Produto não encontrado para atualização.");
+            model.addAttribute("produtos", produtoService.listarTodos());
+            model.addAttribute("produto", produto);
+            model.addAttribute("usuario", usuarioDaSessao(session));
+            return "cadastro-produto";
+        }
         redirectAttributes.addFlashAttribute(
                 "sucesso",
                 novoProduto
