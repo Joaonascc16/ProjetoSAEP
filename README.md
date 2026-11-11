@@ -51,6 +51,22 @@ No Linux ou macOS:
 
 Acesse [http://localhost:8080](http://localhost:8080). O primeiro usuário precisa existir na tabela `usuarios`; esta versão do projeto ainda não possui tela pública de cadastro de usuários.
 
+Depois da primeira inicialização (quando o Hibernate criar as tabelas), gere um hash BCrypt com a classe `BCryptPasswordEncoder` da dependência do projeto:
+
+```java
+var encoder = new org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder();
+System.out.println(encoder.encode("SUA_SENHA"));
+```
+
+Use o hash gerado para criar a primeira conta administradora:
+
+```sql
+INSERT INTO usuarios (login, senha, perfil)
+VALUES ('admin', 'COLE_AQUI_O_HASH_BCRYPT', 'ADMINISTRADOR');
+```
+
+Troque o login e a senha de exemplo antes de usar o sistema.
+
 ## Perfis de acesso
 
 - **OPERADOR:** pode consultar, cadastrar e atualizar produtos, além de registrar movimentações.
