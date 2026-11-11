@@ -63,10 +63,19 @@ public class ProdutoController {
             return "cadastro-produto";
         }
 
+        boolean novoProduto = produto.getId() == null;
+        if (!novoProduto && produtoService.buscarPorId(produto.getId()).isEmpty()) {
+            model.addAttribute("erro", "Produto não encontrado para atualização.");
+            model.addAttribute("produtos", produtoService.listarTodos());
+            model.addAttribute("produto", produto);
+            model.addAttribute("usuario", usuarioDaSessao(session));
+            return "cadastro-produto";
+        }
+
         produtoService.salvar(produto);
         redirectAttributes.addFlashAttribute(
                 "sucesso",
-                produto.getId() == null
+                novoProduto
                         ? "Produto cadastrado com sucesso."
                         : "Produto atualizado com sucesso."
         );
@@ -128,8 +137,15 @@ public class ProdutoController {
             return "redirect:/cadastro-produto";
         }
 
-        produtoService.deletar(id);
-        redirectAttributes.addFlashAttribute("sucesso", "Produto excluído com sucesso.");
+        try {
+            produtoService.deletar(id);
+            redirectAttributes.addFlashAttribute("sucesso", "Produto excluído com sucesso.");
+        } catch (org.springframework.dao.DataIntegrityViolationException e) {
+            redirectAttributes.addFlashAttribute(
+                    "erro",
+                    "Não foi possível excluir o produto porque existem registros vinculados."
+            );
+        }
         return "redirect:/cadastro-produto";
     }
 
