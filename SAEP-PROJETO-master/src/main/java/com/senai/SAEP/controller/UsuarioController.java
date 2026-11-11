@@ -70,7 +70,10 @@ public class UsuarioController {
         }
 
         HttpSession novaSessao = request.getSession(true);
-        novaSessao.setAttribute("usuarioLogado", usuarioOpt.get());
+        UsuarioEntity usuarioAutenticado = usuarioOpt.get();
+        // O hash permanece no banco, mas não precisa ficar na sessão HTTP.
+        usuarioAutenticado.setSenha(null);
+        novaSessao.setAttribute("usuarioLogado", usuarioAutenticado);
 
         return "redirect:/home";
     }
