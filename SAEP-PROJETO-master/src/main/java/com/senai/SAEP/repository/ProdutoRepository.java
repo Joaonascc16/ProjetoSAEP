@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import jakarta.persistence.LockModeType;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ProdutoRepository extends JpaRepository<ProdutoEntity, Long> {
 
@@ -17,5 +18,5 @@ public interface ProdutoRepository extends JpaRepository<ProdutoEntity, Long> {
     // quando duas operações de estoque acontecem simultaneamente.
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select p from ProdutoEntity p where p.id = :id")
-    java.util.Optional<ProdutoEntity> findByIdForUpdate(@Param("id") Long id);
+    Optional<ProdutoEntity> findByIdForUpdate(@Param("id") Long id);
 }
