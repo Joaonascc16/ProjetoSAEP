@@ -1,75 +1,135 @@
 package com.senai.SAEP.controller;
 
+import com.senai.SAEP.entity.PerfilUsuario;
 import com.senai.SAEP.entity.ProdutoEntity;
+import com.senai.SAEP.entity.UsuarioEntity;
 import com.senai.SAEP.service.MovimentacaoService;
 import com.senai.SAEP.service.ProdutoService;
 import jakarta.servlet.http.HttpSession;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
 @Controller
 public class ProdutoController {
 
-    @Autowired
-    private ProdutoService produtoService;
+    private final ProdutoService produtoService;
+    private final MovimentacaoService movimentacaoService;
 
-    @Autowired
-    private MovimentacaoService movimentacaoService;
+    public ProdutoController(
+            ProdutoService produtoService,
+            MovimentacaoService movimentacaoService) {
+        this.produtoService = produtoService;
+        this.movimentacaoService = movimentacaoService;
+    }
 
     @GetMapping("/cadastro-produto")
-    public String cadastroProduto(@RequestParam(value = "busca", required = false) String busca, HttpSession session, Model model) {
-        if (session.getAttribute("usuarioLogado") == null) {
+    public String cadastroProduto(
+            @RequestParam(value = "busca", required = false) String busca,
+            HttpSession session,
+            Model model) {
+
+        if (!estaAutenticado(session)) {
             return "redirect:/login";
         }
 
         model.addAttribute("produtos", produtoService.buscarPorNome(busca));
         model.addAttribute("produto", new ProdutoEntity());
         model.addAttribute("busca", busca);
+        model.addAttribute("usuario", usuarioDaSessao(session));
         return "cadastro-produto";
     }
 
     @PostMapping("/produtos/salvar")
-    public String salvarProduto(@ModelAttribute ProdutoEntity produto, HttpSession session, Model model) {
-        if (session.getAttribute("usuarioLogado") == null) {
+    public String salvarProduto(
+            @ModelAttribute ProdutoEntity produto,
+            HttpSession session,
+            Model model,
+            RedirectAttributes redirectAttributes) {
+
+        if (!estaAutenticado(session)) {
             return "redirect:/login";
         }
 
-        if (produto.getNome() == null || produto.getNome().trim().isEmpty() ||
-                produto.getPreco() == null || produto.getPreco() < 0 ||
-                produto.getQuantidade() == null || produto.getQuantidade() < 0) {
-
-            model.addAttribute("erro", "Preencha todos os campos com valores válidos.");
+        String erroValidacao = validarProduto(produto);
+        if (erroValidacao != null) {
+            model.addAttribute("erro", erroValidacao);
             model.addAttribute("produtos", produtoService.listarTodos());
             model.addAttribute("produto", produto);
+            model.addAttribute("usuario", usuarioDaSessao(session));
             return "cadastro-produto";
         }
 
         produtoService.salvar(produto);
+        redirectAttributes.addFlashAttribute(
+                "sucesso",
+                produto.getId() == null
+                        ? "Produto cadastrado com sucesso."
+                        : "Produto atualizado com sucesso."
+        );
         return "redirect:/cadastro-produto";
     }
 
     @GetMapping("/produtos/editar/{id}")
-    public String editarProduto(@PathVariable Long id, HttpSession session, Model model) {
-        if (session.getAttribute("usuarioLogado") == null) {
+    public String editarProduto(
+            @PathVariable Long id,
+            HttpSession session,
+            Model model,
+            RedirectAttributes redirectAttributes) {
+
+        if (!estaAutenticado(session)) {
             return "redirect:/login";
         }
 
-        produtoService.buscarPorId(id).ifPresent(p -> model.addAttribute("produto", p));
-        model.addAttribute("produtos", produtoService.listarTodos());
-        return "cadastro-produto";
+        return produtoService.buscarPorId(id)
+                .map(produto -> {
+                    model.addAttribute("produto", produto);
+                    model.addAttribute("produtos", produtoService.listarTodos());
+                    model.addAttribute("usuario", usuarioDaSessao(session));
+                    return "cadastro-produto";
+                })
+                .orElseGet(() -> {
+                    redirectAttributes.addFlashAttribute("erro", "Produto não encontrado.");
+                    return "redirect:/cadastro-produto";
+                });
     }
 
-    @GetMapping("/produtos/deletar/{id}")
-    public String deletarProduto(@PathVariable Long id, HttpSession session) {
-        if (session.getAttribute("usuarioLogado") == null) {
+    @PostMapping("/produtos/deletar/{id}")
+    public String deletarProduto(
+            @PathVariable Long id,
+            HttpSession session,
+            RedirectAttributes redirectAttributes) {
+
+        if (!estaAutenticado(session)) {
             return "redirect:/login";
+        }
+
+        if (usuarioDaSessao(session).getPerfil() != PerfilUsuario.ADMINISTRADOR) {
+            redirectAttributes.addFlashAttribute(
+                    "erro",
+                    "Apenas administradores podem excluir produtos."
+            );
+            return "redirect:/cadastro-produto";
+        }
+
+        if (movimentacaoService.existeMovimentacaoParaProduto(id)) {
+            redirectAttributes.addFlashAttribute(
+                    "erro",
+                    "Este produto possui movimentações no histórico e não pode ser excluído."
+            );
+            return "redirect:/cadastro-produto";
+        }
+
+        if (produtoService.buscarPorId(id).isEmpty()) {
+            redirectAttributes.addFlashAttribute("erro", "Produto não encontrado.");
+            return "redirect:/cadastro-produto";
         }
 
         produtoService.deletar(id);
+        redirectAttributes.addFlashAttribute("sucesso", "Produto excluído com sucesso.");
         return "redirect:/cadastro-produto";
     }
 
@@ -80,41 +140,60 @@ public class ProdutoController {
             HttpSession session,
             Model model) {
 
-        if (session.getAttribute("usuarioLogado") == null) {
+        if (!estaAutenticado(session)) {
             return "redirect:/login";
         }
 
-        // Aula 8: produtos ordenados pelo Insertion Sort
         List<ProdutoEntity> produtos = produtoService.ordenarProdutos(ordenar, direcao);
 
-        // Cards de resumo (estoque baixo / sem estoque)
         int totalEstoque = 0;
         int estoqueBaixo = 0;
         int semEstoque = 0;
 
-        for (ProdutoEntity p : produtos) {
-            totalEstoque += p.getQuantidade();
+        for (ProdutoEntity produto : produtos) {
+            int quantidade = produto.getQuantidade() == null ? 0 : produto.getQuantidade();
+            totalEstoque += quantidade;
 
-            if (p.getQuantidade() == 0) {
+            if (quantidade == 0) {
                 semEstoque++;
-            } else if (p.getQuantidade() <= p.getEstoqueMinimo()) {
+            } else if (quantidade <= produto.getEstoqueMinimo()) {
                 estoqueBaixo++;
             }
         }
 
-        model.addAttribute("usuario", session.getAttribute("usuarioLogado"));
+        model.addAttribute("usuario", usuarioDaSessao(session));
         model.addAttribute("produtos", produtos);
         model.addAttribute("totalEstoque", totalEstoque);
         model.addAttribute("produtosEstoqueBaixo", estoqueBaixo);
         model.addAttribute("produtosSemEstoque", semEstoque);
-
-        // Aula 9: histórico de movimentações
         model.addAttribute("movimentacoes", movimentacaoService.listarTodas());
-
-        // Mantém a ordenação escolhida selecionada na tela
         model.addAttribute("ordenar", ordenar);
         model.addAttribute("direcao", direcao);
 
         return "gestao-estoque";
+    }
+
+    private boolean estaAutenticado(HttpSession session) {
+        return usuarioDaSessao(session) != null;
+    }
+
+    private UsuarioEntity usuarioDaSessao(HttpSession session) {
+        return (UsuarioEntity) session.getAttribute("usuarioLogado");
+    }
+
+    private String validarProduto(ProdutoEntity produto) {
+        if (produto.getNome() == null || produto.getNome().isBlank()) {
+            return "Informe o nome do produto.";
+        }
+        if (produto.getPreco() == null || produto.getPreco() <= 0) {
+            return "O preço deve ser maior que zero.";
+        }
+        if (produto.getQuantidade() == null || produto.getQuantidade() < 0) {
+            return "A quantidade não pode ser negativa.";
+        }
+        if (produto.getEstoqueMinimo() < 0) {
+            return "O estoque mínimo não pode ser negativo.";
+        }
+        return null;
     }
 }
