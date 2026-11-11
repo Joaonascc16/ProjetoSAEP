@@ -35,7 +35,7 @@ No terminal, entre na pasta do projeto:
 
 ```powershell
 cd SAEP-PROJETO-master
-` ```
+```
 
 No Windows:
 
