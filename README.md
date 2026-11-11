@@ -90,7 +90,8 @@ Senhas armazenadas em texto puro em instalações antigas continuam funcionando:
 
 ## Funcionalidades
 
-- Autenticação por login e senha.
+- Autenticação por login e senha com hash BCrypt e migração de senhas legadas.
+- Proteção CSRF nas operações HTTP de escrita.
 - Perfis de administrador e operador.
 - Cadastro, consulta, edição e exclusão autorizada de produtos.
 - Pesquisa e ordenação de produtos.
