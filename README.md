@@ -95,6 +95,7 @@ Senhas armazenadas em texto puro em instalações antigas continuam funcionando:
 - Perfis de administrador e operador.
 - Cadastro, consulta, edição e exclusão autorizada de produtos.
 - Pesquisa e ordenação de produtos.
+- Alterações de saldo de estoque somente pelo fluxo de movimentações, preservando rastreabilidade.
 - Registro de entradas e saídas de estoque.
 - Histórico com usuário responsável, data e quantidade anterior/posterior.
 - Validação contra estoque negativo e alertas de estoque baixo ou zerado.
