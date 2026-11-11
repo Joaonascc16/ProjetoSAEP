@@ -2,7 +2,6 @@ package com.senai.SAEP.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
-import jakarta.validation.constraints.DecimalMin;
 
 @Entity
 @Table(name = "produtos")
