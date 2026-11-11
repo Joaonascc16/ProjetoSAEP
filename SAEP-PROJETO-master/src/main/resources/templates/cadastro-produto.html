@@ -1005,12 +1005,12 @@
 
             </a>
 
-            <a href="/logout"
-               class="logout">
-
-                Sair
-
-            </a>
+            <form th:action="@{/logout}" method="post" class="m-0">
+                <button type="submit" class="logout"
+                        style="border:0;background:transparent;cursor:pointer">
+                    Sair
+                </button>
+            </form>
 
         </div>
 
@@ -1405,88 +1405,58 @@
                         </a>
 
 
-                        <button type="button"
-                                class="btn-delete"
-                                data-bs-toggle="modal"
-                                th:data-bs-target="${'#modalDeletar' + p.id}">
+                        <th:block th:if="${usuario != null and usuario.perfil.name() == 'ADMINISTRADOR'}">
+                            <button type="button"
+                                    class="btn-delete"
+                                    data-bs-toggle="modal"
+                                    th:data-bs-target="${'#modalDeletar' + p.id}">
+                                Excluir
+                            </button>
 
-                            Excluir
+                            <!-- MODAL DELETE -->
+                            <div class="modal fade"
+                                 th:id="${'modalDeletar' + p.id}"
+                                 tabindex="-1">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Confirmar exclusão</h5>
+                                            <button type="button"
+                                                    class="btn-close btn-close-white"
+                                                    data-bs-dismiss="modal"></button>
+                                        </div>
 
-                        </button>
+                                        <div class="modal-body">
+                                            Tem certeza que deseja excluir o produto
+                                            <strong th:text="${p.nome}">produto</strong>?
+                                            <br><br>
+                                            <span style="color:#fca5a5">
+                                                Essa ação não poderá ser desfeita.
+                                            </span>
+                                            <p class="mt-3 mb-0" style="color:#fcd34d">
+                                                Produtos com movimentações registradas não podem ser excluídos,
+                                                para preservar o histórico do estoque.
+                                            </p>
+                                        </div>
 
+                                        <div class="modal-footer">
+                                            <button type="button"
+                                                    class="btn btn-cancel"
+                                                    data-bs-dismiss="modal">
+                                                Cancelar
+                                            </button>
 
-                        <!-- MODAL DELETE -->
-
-                        <div class="modal fade"
-                             th:id="${'modalDeletar' + p.id}"
-                             tabindex="-1">
-
-                            <div class="modal-dialog modal-dialog-centered">
-
-                                <div class="modal-content">
-
-                                    <div class="modal-header">
-
-                                        <h5 class="modal-title">
-
-                                            Confirmar exclusão
-
-                                        </h5>
-
-                                        <button type="button"
-                                                class="btn-close btn-close-white"
-                                                data-bs-dismiss="modal">
-
-                                        </button>
-
+                                            <form th:action="@{/produtos/deletar/{id}(id=${p.id})}"
+                                                  method="post" class="m-0">
+                                                <button type="submit" class="btn btn-confirm-delete">
+                                                    Excluir produto
+                                                </button>
+                                            </form>
+                                        </div>
                                     </div>
-
-
-                                    <div class="modal-body">
-
-                                        Tem certeza que deseja excluir
-                                        o produto
-
-                                        <strong th:text="${p.nome}">
-                                            produto
-                                        </strong>?
-
-                                        <br><br>
-
-                                        <span style="color:#fca5a5">
-
-                                            Essa ação não poderá ser desfeita.
-
-                                        </span>
-
-                                    </div>
-
-
-                                    <div class="modal-footer">
-
-                                        <button type="button"
-                                                class="btn btn-cancel"
-                                                data-bs-dismiss="modal">
-
-                                            Cancelar
-
-                                        </button>
-
-
-                                        <a class="btn btn-confirm-delete"
-                                           th:href="@{/produtos/deletar/{id}(id=${p.id})}">
-
-                                            Excluir produto
-
-                                        </a>
-
-                                    </div>
-
                                 </div>
-
                             </div>
-
-                        </div>
+                        </th:block>
 
                     </td>
 
