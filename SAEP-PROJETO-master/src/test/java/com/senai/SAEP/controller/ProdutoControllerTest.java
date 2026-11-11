@@ -14,7 +14,6 @@ import org.springframework.mock.web.MockHttpSession;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
 
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -61,11 +60,10 @@ class ProdutoControllerTest {
     }
 
     @Test
-    void edicaoPreservaQuantidadeEExigeMovimentacaoParaAlterarSaldo() {
+    void edicaoDelegadaAoServicoPreservaSaldoNoBanco() {
         MockHttpSession session = sessaoComPerfil(PerfilUsuario.OPERADOR);
-        ProdutoEntity existente = produto(1L, "Mouse", 10.0, 12, 3);
         ProdutoEntity enviado = produto(1L, "Mouse Gamer", 15.0, 999, 4);
-        when(produtoService.buscarPorId(1L)).thenReturn(Optional.of(existente));
+        when(produtoService.atualizarDados(enviado)).thenReturn(true);
 
         String view = produtoController.salvarProduto(
                 enviado,
@@ -75,9 +73,8 @@ class ProdutoControllerTest {
         );
 
         assertEquals("redirect:/cadastro-produto", view);
-        assertEquals(12, enviado.getQuantidade());
-        assertEquals("Mouse Gamer", enviado.getNome());
-        verify(produtoService).salvar(enviado);
+        verify(produtoService).atualizarDados(enviado);
+        verify(produtoService, never()).salvar(enviado);
     }
 
     private MockHttpSession sessaoComPerfil(PerfilUsuario perfil) {
