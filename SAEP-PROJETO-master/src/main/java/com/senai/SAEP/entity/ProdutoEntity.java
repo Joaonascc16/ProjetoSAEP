@@ -2,6 +2,7 @@ package com.senai.SAEP.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.DecimalMin;
 
 @Entity
 @Table(name = "produtos")
@@ -15,13 +16,14 @@ public class ProdutoEntity {
     private String nome;
 
     @NotNull(message = "O preço é obrigatório")
-    @Min(value = 0, message = "Preço inválido")
+    @DecimalMin(value = "0.01", message = "O preço deve ser maior que zero")
     private Double preco;
 
     @NotNull(message = "A quantidade é obrigatória")
     @Min(value = 0, message = "Quantidade inválida")
     private Integer quantidade;
 
+    @Min(value = 0, message = "O estoque mínimo não pode ser negativo")
     private int estoqueMinimo;
 
     public ProdutoEntity() {}
