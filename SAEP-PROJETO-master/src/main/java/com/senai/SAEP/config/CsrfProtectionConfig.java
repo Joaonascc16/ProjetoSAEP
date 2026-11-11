@@ -24,11 +24,11 @@ public class CsrfProtectionConfig implements WebMvcConfigurer {
         registry.addInterceptor(new CsrfInterceptor(csrfTokenManager));
     }
 
-    private static class CsrfInterceptor implements HandlerInterceptor {
+    static class CsrfInterceptor implements HandlerInterceptor {
 
         private final CsrfTokenManager csrfTokenManager;
 
-        private CsrfInterceptor(CsrfTokenManager csrfTokenManager) {
+        CsrfInterceptor(CsrfTokenManager csrfTokenManager) {
             this.csrfTokenManager = csrfTokenManager;
         }
 
@@ -38,7 +38,13 @@ public class CsrfProtectionConfig implements WebMvcConfigurer {
                 HttpServletResponse response,
                 Object handler) throws IOException {
 
-            if (!"POST".equalsIgnoreCase(request.getMethod())) {
+            String method = request.getMethod();
+
+            // Métodos seguros não alteram estado e não exigem token CSRF.
+            if ("GET".equalsIgnoreCase(method)
+                    || "HEAD".equalsIgnoreCase(method)
+                    || "OPTIONS".equalsIgnoreCase(method)
+                    || "TRACE".equalsIgnoreCase(method)) {
                 return true;
             }
 
@@ -46,7 +52,10 @@ public class CsrfProtectionConfig implements WebMvcConfigurer {
             String submittedToken = request.getParameter("_csrf");
 
             if (!csrfTokenManager.isValid(session, submittedToken)) {
-                response.sendError(HttpServletResponse.SC_FORBIDDEN, "Token CSRF inválido ou ausente.");
+                response.sendError(
+                        HttpServletResponse.SC_FORBIDDEN,
+                        "Token CSRF inválido ou ausente."
+                );
                 return false;
             }
 
