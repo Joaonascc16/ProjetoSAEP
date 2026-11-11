@@ -9,9 +9,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ProdutoServiceTest {
@@ -56,6 +57,38 @@ class ProdutoServiceTest {
                 List.of("Caro", "Médio", "Barato"),
                 resultado.stream().map(ProdutoEntity::getNome).toList()
         );
+    }
+
+    @Test
+    void atualizarDadosPreservaSaldoAtualMesmoComQuantidadeAntigaNoFormulario() {
+        ProdutoEntity existente = produto("Mouse", 10.0, 12);
+        existente.setId(1L);
+        existente.setEstoqueMinimo(3);
+
+        ProdutoEntity enviado = produto("Mouse Gamer", 15.0, 8);
+        enviado.setId(1L);
+        enviado.setEstoqueMinimo(4);
+
+        when(produtoRepository.findByIdForUpdate(1L)).thenReturn(Optional.of(existente));
+
+        boolean atualizado = produtoService.atualizarDados(enviado);
+
+        assertTrue(atualizado);
+        assertEquals("Mouse Gamer", existente.getNome());
+        assertEquals(15.0, existente.getPreco());
+        assertEquals(4, existente.getEstoqueMinimo());
+        assertEquals(12, existente.getQuantidade(), "O saldo do banco deve ser preservado.");
+        verify(produtoRepository).save(existente);
+    }
+
+    @Test
+    void atualizarDadosRetornaFalseQuandoProdutoNaoExiste() {
+        ProdutoEntity enviado = produto("Inexistente", 10.0, 0);
+        enviado.setId(99L);
+        when(produtoRepository.findByIdForUpdate(99L)).thenReturn(Optional.empty());
+
+        assertFalse(produtoService.atualizarDados(enviado));
+        verify(produtoRepository, never()).save(any());
     }
 
     private ProdutoEntity produto(String nome, double preco, int quantidade) {
