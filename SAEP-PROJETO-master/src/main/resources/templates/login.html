@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Login | Sistema JY</title>
+
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+            rel="stylesheet">
+
+
+    <style>
+
+        /* =========================================
+           RESET
+        ========================================== */
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        /* =========================================
+           BODY
+        ========================================== */
+
+        body {
+
+            margin: 0;
+
+            min-height: 100vh;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-family: "Segoe UI", Arial, sans-serif;
+
+            color: #e8eaf6;
+
+            background:
+
+                radial-gradient(
+                    circle at 15% 15%,
+                    rgba(37, 99, 235, 0.20),
+                    transparent 30%
+                ),
+
+                radial-gradient(
+                    circle at 85% 20%,
+                    rgba(124, 58, 237, 0.22),
+                    transparent 32%
+                ),
+
+                radial-gradient(
+                    circle at 50% 100%,
+                    rgba(59, 130, 246, 0.08),
+                    transparent 38%
+                ),
+
+                #050711;
+
+            overflow: hidden;
+        }
+
+
+        /* =========================================
+           BACKGROUND LIGHTS
+        ========================================== */
+
+        .background-light {
+
+            position: fixed;
+
+            width: 350px;
+
+            height: 350px;
+
+            border-radius: 50%;
+
+            filter: blur(100px);
+
+            opacity: 0.12;
+
+            pointer-events: none;
+        }
+
+        .light-blue {
+
+            top: -150px;
+
+            left: -100px;
+
+            background: #2563eb;
+        }
+
+        .light-purple {
+
+            right: -120px;
+
+            bottom: -150px;
+
+            background: #7c3aed;
+        }
+
+
+        /* =========================================
+           LOGIN CARD
+        ========================================== */
+
+        .login-card {
+
+            position: relative;
+
+            width: 390px;
+
+            padding: 38px 35px 35px;
+
+            border-radius: 22px;
+
+            background:
+
+                linear-gradient(
+                    145deg,
+                    rgba(17, 24, 39, 0.92),
+                    rgba(7, 10, 22, 0.94)
+                );
+
+            border:
+
+                1px solid rgba(139, 92, 246, 0.20);
+
+            box-shadow:
+
+                0 35px 90px rgba(0, 0, 0, 0.55),
+
+                inset 0 1px 0 rgba(255, 255, 255, 0.04);
+
+            backdrop-filter: blur(20px);
+
+            overflow: hidden;
+
+            z-index: 2;
+        }
+
+
+        /* =========================================
+           CARD TOP BORDER
+        ========================================== */
+
+        .login-card::before {
+
+            content: "";
+
+            position: absolute;
+
+            top: 0;
+
+            left: 8%;
+
+            width: 84%;
+
+            height: 1px;
+
+            background:
+
+                linear-gradient(
+                    90deg,
+                    transparent,
+                    #3b82f6,
+                    #8b5cf6,
+                    transparent
+                );
+
+            box-shadow:
+
+                0 0 12px rgba(99, 102, 241, 0.45);
+        }
+
+
+        /* =========================================
+           LOGO
+        ========================================== */
+
+        .logo {
+
+            width: 58px;
+
+            height: 58px;
+
+            margin: 0 auto 20px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            border-radius: 16px;
+
+            color: white;
+
+            font-size: 21px;
+
+            font-weight: 800;
+
+            background:
+
+                linear-gradient(
+                    135deg,
+                    #2563eb,
+                    #4f46e5,
+                    #7c3aed
+                );
+
+            border:
+
+                1px solid rgba(255,255,255,0.18);
+
+            box-shadow:
+
+                0 0 30px rgba(79, 70, 229, 0.30);
+        }
+
+
+        /* =========================================
+           TITLE
+        ========================================== */
+
+        .login-title {
+
+            color: #ffffff;
+
+            text-align: center;
+
+            font-size: 27px;
+
+            font-weight: 750;
+
+            letter-spacing: -0.5px;
+
+            margin-bottom: 6px;
+        }
+
+
+        .login-title span {
+
+            background:
+
+                linear-gradient(
+                    90deg,
+                    #60a5fa,
+                    #818cf8,
+                    #a78bfa
+                );
+
+            -webkit-background-clip: text;
+
+            -webkit-text-fill-color: transparent;
+        }
+
+
+        .login-subtitle {
+
+            color: #737d94;
+
+            text-align: center;
+
+            font-size: 13px;
+
+            margin-bottom: 30px;
+        }
+
+
+        /* =========================================
+           LABELS
+        ========================================== */
+
+        .form-label {
+
+            color: #aeb8cc;
+
+            font-size: 12px;
+
+            font-weight: 650;
+
+            margin-bottom: 8px;
+        }
+
+
+        /* =========================================
+           INPUTS
+        ========================================== */
+
+        .input-group-custom {
+
+            position: relative;
+        }
+
+
+        .form-control {
+
+            height: 47px;
+
+            color: #e5e7eb !important;
+
+            background:
+
+                rgba(3, 7, 18, 0.75) !important;
+
+            border:
+
+                1px solid rgba(148, 163, 184, 0.13) !important;
+
+            border-radius: 10px;
+
+            padding: 0 14px;
+
+            transition: 0.25s;
+
+            box-shadow:
+
+                inset 0 1px 6px rgba(0, 0, 0, 0.20);
+        }
+
+
+        .form-control::placeholder {
+
+            color: #4f5a70;
+        }
+
+
+        .form-control:hover {
+
+            border-color:
+
+                rgba(99, 102, 241, 0.30) !important;
+        }
+
+
+        .form-control:focus {
+
+            color: white !important;
+
+            background:
+
+                rgba(5, 9, 22, 0.94) !important;
+
+            border-color:
+
+                #6366f1 !important;
+
+            box-shadow:
+
+                0 0 0 3px rgba(99, 102, 241, 0.10),
+
+                0 0 25px rgba(79, 70, 229, 0.10);
+        }
+
+
+        /* =========================================
+           ERROR
+        ========================================== */
+
+        .custom-alert {
+
+            color: #fecaca;
+
+            background:
+
+                rgba(127, 29, 29, 0.16);
+
+            border:
+
+                1px solid rgba(248, 113, 113, 0.22);
+
+            border-radius: 10px;
+
+            font-size: 12px;
+
+            padding: 10px 12px;
+
+            margin-bottom: 22px;
+        }
+
+
+        /* =========================================
+           LOGIN BUTTON
+        ========================================== */
+
+        .login-button {
+
+            width: 100%;
+
+            height: 47px;
+
+            margin-top: 8px;
+
+            border: none;
+
+            border-radius: 10px;
+
+            color: white;
+
+            font-size: 13px;
+
+            font-weight: 700;
+
+            background:
+
+                linear-gradient(
+                    110deg,
+                    #2563eb 0%,
+                    #4f46e5 48%,
+                    #7c3aed 100%
+                );
+
+            box-shadow:
+
+                0 9px 28px rgba(79, 70, 229, 0.27);
+
+            transition: 0.25s;
+        }
+
+
+        .login-button:hover {
+
+            color: white;
+
+            transform: translateY(-2px);
+
+            box-shadow:
+
+                0 13px 38px rgba(79, 70, 229, 0.40);
+        }
+
+
+        .login-button:active {
+
+            transform: translateY(0);
+        }
+
+
+        /* =========================================
+           FOOTER
+        ========================================== */
+
+        .login-footer {
+
+            margin-top: 25px;
+
+            padding-top: 18px;
+
+            border-top:
+
+                1px solid rgba(255,255,255,0.06);
+
+            text-align: center;
+
+            color: #4f5a70;
+
+            font-size: 11px;
+        }
+
+
+        .login-footer span {
+
+            background:
+
+                linear-gradient(
+                    90deg,
+                    #3b82f6,
+                    #8b5cf6
+                );
+
+            -webkit-background-clip: text;
+
+            -webkit-text-fill-color: transparent;
+
+            font-weight: 650;
+        }
+
+
+        /* =========================================
+           RESPONSIVE
+        ========================================== */
+
+        @media (max-width: 500px) {
+
+            body {
+
+                padding: 20px;
+            }
+
+            .login-card {
+
+                width: 100%;
+
+                padding: 32px 25px 28px;
+            }
+
+        }
+
+    </style>
+
+
+</head>
+
+<body>
+
+<!-- =========================================
+     BACKGROUND EFFECTS
+========================================== -->
+
+<div class="background-light light-blue"></div>
+
+<div class="background-light light-purple"></div>
+
+<!-- =========================================
+     LOGIN
+========================================== -->
+
+<div class="login-card">
+
+
+    <!-- LOGO -->
+
+    <div class="logo">
+
+        &lt;/&gt;
+
+    </div>
+
+
+    <!-- TITLE -->
+
+    <h1 class="login-title">
+
+        Bem-vindo ao
+        <span>Sistema JY</span>
+
+    </h1>
+
+
+    <p class="login-subtitle">
+
+        Entre com seus dados para acessar o sistema
+
+    </p>
+
+
+    <!-- =========================================
+         ERROR MESSAGE
+    ========================================== -->
+
+    <div
+            th:if="${erro != null}"
+            class="alert custom-alert"
+            th:text="${erro}">
+    </div>
+
+
+    <!-- =========================================
+         FORM
+    ========================================== -->
+
+    <form
+            th:action="@{/login}"
+            th:object="${usuarioDto}"
+            method="post">
+
+
+        <!-- LOGIN -->
+
+        <div class="mb-4">
+
+            <label class="form-label">
+
+                Login
+
+            </label>
+
+
+            <div class="input-group-custom">
+
+                <input
+                        type="text"
+                        class="form-control"
+                        th:field="*{login}"
+                        placeholder="Digite seu login"
+                        autocomplete="username">
+
+            </div>
+
+        </div>
+
+
+        <!-- PASSWORD -->
+
+        <div class="mb-3">
+
+            <label class="form-label">
+
+                Senha
+
+            </label>
+
+
+            <div class="input-group-custom">
+
+                <input
+                        type="password"
+                        class="form-control"
+                        th:field="*{senha}"
+                        placeholder="Digite sua senha"
+                        autocomplete="current-password">
+
+            </div>
+
+        </div>
+
+
+        <!-- BUTTON -->
+
+        <button
+                type="submit"
+                class="btn login-button">
+
+            Entrar no sistema
+
+        </button>
+
+
+    </form>
+
+
+    <!-- =========================================
+         FOOTER
+    ========================================== -->
+
+    <div class="login-footer">
+
+        Sistema <span>SAEP</span> • Acesso seguro
+
+    </div>
+
+
+</div>
+
+</body>
+
+</html>

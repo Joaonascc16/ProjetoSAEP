@@ -1,0 +1,1580 @@
+<!DOCTYPE html>
+<html lang="pt-BR"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Cadastro de Produtos | Sistema JY</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+
+            margin: 0;
+
+            min-height: 100vh;
+
+            font-family: "Segoe UI", Arial, sans-serif;
+
+            color: #f8fafc;
+
+            background:
+
+                radial-gradient(
+                    circle at 10% 10%,
+                    rgba(37,99,235,.15),
+                    transparent 32%
+                ),
+
+                radial-gradient(
+                    circle at 90% 90%,
+                    rgba(124,58,237,.15),
+                    transparent 32%
+                ),
+
+                #050711;
+
+        }
+
+
+        /* =========================
+           NAVBAR
+        ========================= */
+
+        .navbar-custom {
+
+            height: 75px;
+
+            padding: 0 5%;
+
+            background:
+                rgba(5,7,17,.78);
+
+            backdrop-filter: blur(18px);
+
+            border-bottom:
+                1px solid rgba(255,255,255,.08);
+
+        }
+
+
+        .brand {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+
+            color: white;
+
+            text-decoration: none;
+
+            font-weight: 700;
+
+            font-size: 18px;
+
+        }
+
+
+        .brand-icon {
+
+            width: 40px;
+            height: 40px;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 11px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #2563eb,
+                    #4f46e5,
+                    #7c3aed
+                );
+
+            box-shadow:
+                0 8px 25px rgba(79,70,229,.25);
+
+            font-size: 15px;
+
+        }
+
+
+        .nav-actions {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 20px;
+
+        }
+
+
+        .nav-link-custom {
+
+            color: #94a3b8;
+
+            text-decoration: none;
+
+            font-size: 14px;
+
+            transition: .2s;
+
+        }
+
+
+        .nav-link-custom:hover {
+
+            color: white;
+
+        }
+
+
+        .logout {
+
+            color: #94a3b8;
+
+            text-decoration: none;
+
+            font-size: 14px;
+
+        }
+
+
+        .logout:hover {
+
+            color: #f87171;
+
+        }
+
+
+        /* =========================
+           MAIN
+        ========================= */
+
+        .main {
+
+            width: 90%;
+
+            max-width: 1200px;
+
+            margin: auto;
+
+            padding: 55px 0 80px;
+
+        }
+
+
+        .header {
+
+            margin-bottom: 35px;
+
+        }
+
+
+        .eyebrow {
+
+            color: #818cf8;
+
+            text-transform: uppercase;
+
+            letter-spacing: 1.5px;
+
+            font-size: 12px;
+
+            font-weight: 700;
+
+            margin-bottom: 8px;
+
+        }
+
+
+        .title {
+
+            font-size: 34px;
+
+            font-weight: 800;
+
+            margin-bottom: 8px;
+
+        }
+
+
+        .gradient-text {
+
+            background:
+
+                linear-gradient(
+                    90deg,
+                    #60a5fa,
+                    #818cf8,
+                    #a78bfa
+                );
+
+            -webkit-background-clip: text;
+
+            -webkit-text-fill-color: transparent;
+
+        }
+
+
+        .subtitle {
+
+            color: #64748b;
+
+            font-size: 14px;
+
+        }
+
+
+        /* =========================
+           FORM CARD
+        ========================= */
+
+        .form-card {
+
+            position: relative;
+
+            overflow: hidden;
+
+            padding: 30px;
+
+            border-radius: 20px;
+
+            background:
+                rgba(15,23,42,.75);
+
+            border:
+                1px solid rgba(255,255,255,.08);
+
+            backdrop-filter: blur(15px);
+
+            box-shadow:
+                0 20px 55px rgba(0,0,0,.25);
+
+            margin-bottom: 25px;
+
+        }
+
+
+        .form-card::before {
+
+            content: "";
+
+            position: absolute;
+
+            top: 0;
+            left: 0;
+
+            width: 100%;
+            height: 2px;
+
+            background:
+
+                linear-gradient(
+                    90deg,
+                    #2563eb,
+                    #4f46e5,
+                    #7c3aed
+                );
+
+        }
+
+
+        .section-title {
+
+            font-size: 18px;
+
+            font-weight: 700;
+
+            margin-bottom: 25px;
+
+        }
+
+
+        .form-label {
+
+            color: #cbd5e1;
+
+            font-size: 13px;
+
+            font-weight: 600;
+
+            margin-bottom: 8px;
+
+        }
+
+
+        .form-control {
+
+            height: 48px;
+
+            color: #f8fafc !important;
+
+            background:
+                rgba(2,6,23,.60) !important;
+
+            border:
+                1px solid rgba(148,163,184,.15);
+
+            border-radius: 11px;
+
+        }
+
+
+        .form-control::placeholder {
+
+            color: #64748b;
+
+        }
+
+
+        .form-control:focus {
+
+            border-color: #6366f1;
+
+            box-shadow:
+                0 0 0 3px rgba(99,102,241,.12);
+
+        }
+
+
+        .btn-save {
+
+            height: 48px;
+
+            padding: 0 25px;
+
+            border: none;
+
+            border-radius: 11px;
+
+            color: white;
+
+            font-weight: 700;
+
+            background:
+
+                linear-gradient(
+                    135deg,
+                    #2563eb,
+                    #4f46e5,
+                    #7c3aed
+                );
+
+            box-shadow:
+                0 8px 25px rgba(79,70,229,.20);
+
+            transition: .25s;
+
+        }
+
+
+        .btn-save:hover {
+
+            transform: translateY(-2px);
+
+            box-shadow:
+                0 12px 30px rgba(79,70,229,.32);
+
+        }
+
+
+        /* =========================
+           SEARCH
+        ========================= */
+
+        .search-area {
+
+            display: flex;
+
+            gap: 10px;
+
+            margin-bottom: 20px;
+
+        }
+
+
+        .search-area .form-control {
+
+            flex: 1;
+
+        }
+
+
+        .btn-search {
+
+            border:
+                1px solid rgba(99,102,241,.25);
+
+            background:
+                rgba(79,70,229,.10);
+
+            color: #a5b4fc;
+
+            border-radius: 11px;
+
+            padding: 0 20px;
+
+        }
+
+
+        .btn-search:hover {
+
+            background:
+                rgba(79,70,229,.18);
+
+            color: white;
+
+        }
+
+
+        /* =========================
+   TABELA - VERSÃO CORRIGIDA
+========================= */
+
+.table-card {
+    overflow: hidden;
+
+    border-radius: 20px;
+
+    background: #0b1222;
+
+    border: 1px solid rgba(148, 163, 184, 0.14);
+
+    box-shadow:
+        0 15px 40px rgba(0, 0, 0, 0.30);
+}
+
+
+/* Área da tabela */
+
+.table {
+    width: 100%;
+
+    margin: 0;
+
+    color: #e2e8f0;
+
+    background: #0b1222;
+
+    --bs-table-bg: transparent;
+    --bs-table-color: #e2e8f0;
+}
+
+
+/* Cabeçalho */
+
+.table thead {
+    background: #111a2e;
+}
+
+.table th {
+    padding: 18px;
+
+    color: #94a3b8 !important;
+
+    background: #111a2e !important;
+
+    border-bottom:
+        1px solid rgba(148, 163, 184, 0.14) !important;
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.8px;
+}
+
+
+/* Células */
+
+.table td {
+    padding: 19px 18px;
+
+    color: #e2e8f0 !important;
+
+    background: #0b1222 !important;
+
+    border-bottom:
+        1px solid rgba(148, 163, 184, 0.08) !important;
+
+    vertical-align: middle;
+
+    font-size: 14px;
+}
+
+
+/* Última linha */
+
+.table tbody tr:last-child td {
+    border-bottom: none !important;
+}
+
+
+/* Hover */
+
+.table tbody tr {
+    transition: background .2s ease;
+}
+
+.table tbody tr:hover td {
+    background:
+        rgba(59, 130, 246, 0.055) !important;
+}
+
+
+/* ID */
+
+.table td:first-child {
+    color: #64748b !important;
+
+    font-weight: 600;
+}
+
+
+/* Nome do produto */
+
+.table td:nth-child(2) {
+    color: #f1f5f9 !important;
+
+    font-weight: 600;
+}
+
+
+/* Preço */
+
+.table .price {
+    color: #4ade80 !important;
+
+    font-weight: 700;
+
+    white-space: nowrap;
+}
+
+
+/* Estoque */
+
+.table .stock {
+    color: #60a5fa !important;
+
+    font-weight: 700;
+}
+
+
+/* =========================
+   BOTÃO EDITAR
+========================= */
+
+.btn-edit {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 7px 13px;
+
+    margin-right: 5px;
+
+    border-radius: 8px;
+
+    color: #60a5fa !important;
+
+    background:
+        rgba(37, 99, 235, 0.10);
+
+    border:
+        1px solid rgba(59, 130, 246, 0.25);
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    text-decoration: none;
+
+    transition: .2s;
+}
+
+.btn-edit:hover {
+    color: #bfdbfe !important;
+
+    background:
+        rgba(37, 99, 235, 0.20);
+
+    border-color:
+        rgba(96, 165, 250, 0.45);
+
+    transform: translateY(-1px);
+}
+
+
+/* =========================
+   BOTÃO EXCLUIR
+========================= */
+
+.btn-delete {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 7px 13px;
+
+    border-radius: 8px;
+
+    color: #f87171 !important;
+
+    background:
+        rgba(239, 68, 68, 0.08);
+
+    border:
+        1px solid rgba(239, 68, 68, 0.22);
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    transition: .2s;
+}
+
+.btn-delete:hover {
+    color: #fecaca !important;
+
+    background:
+        rgba(239, 68, 68, 0.16);
+
+    border-color:
+        rgba(248, 113, 113, 0.40);
+
+    transform: translateY(-1px);
+}
+
+
+/* =========================
+   ESTADO VAZIO
+========================= */
+
+.empty {
+    padding: 60px 20px !important;
+
+    color: #64748b !important;
+
+    background: #0b1222 !important;
+
+    text-align: center;
+
+    font-size: 14px;
+}
+
+
+        /* =========================
+           MODAL
+        ========================= */
+
+        .modal-content {
+
+            background:
+                #0f172a;
+
+            color: #f8fafc;
+
+            border:
+                1px solid rgba(255,255,255,.10);
+
+            border-radius: 18px;
+
+        }
+
+
+        .modal-header {
+
+            border-bottom:
+                1px solid rgba(255,255,255,.07);
+
+        }
+
+
+        .modal-footer {
+
+            border-top:
+                1px solid rgba(255,255,255,.07);
+
+        }
+
+
+        .btn-cancel {
+
+            color: #cbd5e1;
+
+            background:
+                rgba(148,163,184,.08);
+
+            border:
+                1px solid rgba(148,163,184,.15);
+
+        }
+
+
+        .btn-confirm-delete {
+
+            color: white;
+
+            background:
+                #dc2626;
+
+            border: none;
+
+        }
+
+
+        /* =========================
+           TOASTS
+        ========================= */
+
+        .toast-container-custom {
+
+            position: fixed;
+
+            top: 90px;
+
+            right: 25px;
+
+            z-index: 9999;
+
+            width:
+                min(390px, calc(100vw - 30px));
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 12px;
+
+        }
+
+
+        .toast-custom {
+
+            display: flex;
+
+            align-items: flex-start;
+
+            gap: 13px;
+
+            padding: 16px 18px;
+
+            border-radius: 15px;
+
+            background:
+                rgba(15,23,42,.96);
+
+            backdrop-filter: blur(15px);
+
+            border:
+                1px solid rgba(255,255,255,.10);
+
+            box-shadow:
+                0 15px 40px rgba(0,0,0,.45);
+
+            animation:
+                toastIn .35s ease;
+
+        }
+
+
+        .toast-custom.error {
+
+            border-left:
+                4px solid #ef4444;
+
+        }
+
+
+        .toast-custom.success {
+
+            border-left:
+                4px solid #22c55e;
+
+        }
+
+
+        .toast-custom.warning {
+
+            border-left:
+                4px solid #f59e0b;
+
+        }
+
+
+        .toast-custom.info {
+
+            border-left:
+                4px solid #3b82f6;
+
+        }
+
+
+        .toast-icon {
+
+            font-size: 21px;
+
+            line-height: 1;
+
+        }
+
+
+        .toast-title {
+
+            font-size: 14px;
+
+            font-weight: 700;
+
+            margin-bottom: 3px;
+
+        }
+
+
+        .toast-message {
+
+            color: #94a3b8;
+
+            font-size: 13px;
+
+            line-height: 1.4;
+
+        }
+
+
+        .toast-close {
+
+            margin-left: auto;
+
+            border: none;
+
+            background: transparent;
+
+            color: #64748b;
+
+            font-size: 18px;
+
+            cursor: pointer;
+
+        }
+
+
+        .toast-close:hover {
+
+            color: white;
+
+        }
+
+
+        @keyframes toastIn {
+
+            from {
+
+                opacity: 0;
+
+                transform: translateX(35px);
+
+            }
+
+            to {
+
+                opacity: 1;
+
+                transform: translateX(0);
+
+            }
+
+        }
+
+
+        @keyframes toastOut {
+
+            from {
+
+                opacity: 1;
+
+                transform: translateX(0);
+
+            }
+
+            to {
+
+                opacity: 0;
+
+                transform: translateX(35px);
+
+            }
+
+        }
+
+
+        @media (max-width: 700px) {
+
+            .main {
+
+                width: 94%;
+
+            }
+
+            .form-card {
+
+                padding: 20px;
+
+            }
+
+            .search-area {
+
+                flex-direction: column;
+
+            }
+
+            .btn-search {
+
+                height: 48px;
+
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================
+     NAVBAR
+========================= -->
+
+<nav class="navbar-custom">
+
+    <div class="d-flex justify-content-between align-items-center h-100">
+
+        <a href="/home"
+           class="brand">
+
+            <div class="brand-icon">
+                &lt;/&gt;
+            </div>
+
+            Sistema SAEP
+
+        </a>
+
+
+        <div class="nav-actions">
+
+            <a href="/home"
+               class="nav-link-custom">
+
+                Painel
+
+            </a>
+
+            <a href="/gestao-estoque"
+               class="nav-link-custom">
+
+                Estoque
+
+            </a>
+
+            <a href="/logout"
+               class="logout">
+
+                Sair
+
+            </a>
+
+        </div>
+
+    </div>
+
+</nav>
+
+
+<!-- =========================
+     TOASTS
+========================= -->
+
+<div class="toast-container-custom">
+
+    <!-- ERRO -->
+
+    <div th:if="${erro != null}"
+         class="toast-custom error">
+
+        <div class="toast-icon">
+            ⚠️
+        </div>
+
+        <div>
+
+            <div class="toast-title">
+                Erro
+            </div>
+
+            <div class="toast-message"
+                 th:text="${erro}">
+                Ocorreu um erro.
+            </div>
+
+        </div>
+
+        <button class="toast-close"
+                onclick="fecharToast(this)">
+            ×
+        </button>
+
+    </div>
+
+
+    <!-- SUCESSO -->
+
+    <div th:if="${sucesso != null}"
+         class="toast-custom success">
+
+        <div class="toast-icon">
+            ✓
+        </div>
+
+        <div>
+
+            <div class="toast-title">
+                Sucesso
+            </div>
+
+            <div class="toast-message"
+                 th:text="${sucesso}">
+                Operação realizada com sucesso.
+            </div>
+
+        </div>
+
+        <button class="toast-close"
+                onclick="fecharToast(this)">
+            ×
+        </button>
+
+    </div>
+
+
+    <!-- ATENÇÃO -->
+
+    <div th:if="${aviso != null}"
+         class="toast-custom warning">
+
+        <div class="toast-icon">
+            ⚠
+        </div>
+
+        <div>
+
+            <div class="toast-title">
+                Atenção
+            </div>
+
+            <div class="toast-message"
+                 th:text="${aviso}">
+                Atenção.
+            </div>
+
+        </div>
+
+        <button class="toast-close"
+                onclick="fecharToast(this)">
+            ×
+        </button>
+
+    </div>
+
+
+    <!-- INFORMAÇÃO -->
+
+    <div th:if="${info != null}"
+         class="toast-custom info">
+
+        <div class="toast-icon">
+            ⓘ
+        </div>
+
+        <div>
+
+            <div class="toast-title">
+                Informação
+            </div>
+
+            <div class="toast-message"
+                 th:text="${info}">
+                Informação.
+            </div>
+
+        </div>
+
+        <button class="toast-close"
+                onclick="fecharToast(this)">
+            ×
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     MAIN
+========================= -->
+
+<main class="main">
+
+
+    <div class="header">
+
+        <div class="eyebrow">
+            Gerenciamento
+        </div>
+
+        <h1 class="title">
+
+            Cadastro de
+            <span class="gradient-text">
+                Produtos
+            </span>
+
+        </h1>
+
+        <p class="subtitle">
+
+            Cadastre e gerencie os produtos
+            disponíveis no sistema.
+
+        </p>
+
+    </div>
+
+
+    <!-- =========================
+         FORM
+    ========================= -->
+
+    <div class="form-card">
+
+        <h2 class="section-title">
+
+            Dados do produto
+
+        </h2>
+
+
+        <form th:action="@{/produtos/salvar}"
+              th:object="${produto}"
+              method="post">
+
+
+            <input type="hidden"
+                   th:field="*{id}">
+
+
+            <div class="row g-3">
+
+
+                <div class="col-md-4">
+
+                    <label class="form-label">
+                        Nome do produto
+                    </label>
+
+                    <input type="text"
+                           class="form-control"
+                           th:field="*{nome}"
+                           placeholder="Digite o nome do produto"
+                           required>
+
+                </div>
+
+
+                <div class="col-md-2">
+
+                    <label class="form-label">
+                        Preço
+                    </label>
+
+                    <input type="number"
+                           class="form-control"
+                           th:field="*{preco}"
+                           placeholder="0,00"
+                           min="0.01"
+                           step="0.01"
+                           required>
+
+                </div>
+
+
+                <div class="col-md-3">
+
+                    <label class="form-label">
+                        Quantidade
+                    </label>
+
+                    <input type="number"
+                           class="form-control"
+                           th:field="*{quantidade}"
+                           placeholder="0"
+                           min="0"
+                           required>
+
+                </div>
+
+
+                <div class="col-md-3">
+
+                    <label class="form-label">
+                        Estoque mínimo
+                    </label>
+
+                    <input type="number"
+                           class="form-control"
+                           th:field="*{estoqueMinimo}"
+                           placeholder="0"
+                           min="0"
+                           required>
+
+                </div>
+
+
+                <div class="col-12 d-flex justify-content-end">
+
+                    <button type="submit"
+                            class="btn-save">
+
+                        Salvar produto
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+    <!-- =========================
+         BUSCA
+    ========================= -->
+
+    <div class="search-area">
+
+        <form th:action="@{/cadastro-produto}"
+              method="get"
+              class="d-flex gap-2 w-100">
+
+            <input type="text"
+                   class="form-control"
+                   name="busca"
+                   th:value="${busca}"
+                   placeholder="Pesquisar produto...">
+
+            <button type="submit"
+                    class="btn-search">
+
+                🔎 Buscar
+
+            </button>
+
+        </form>
+
+    </div>
+
+
+    <!-- =========================
+         TABLE
+    ========================= -->
+
+    <div class="table-card">
+
+        <div class="table-responsive">
+
+            <table class="table">
+
+                <thead>
+
+                <tr>
+
+                    <th>
+                        ID
+                    </th>
+
+                    <th>
+                        Produto
+                    </th>
+
+                    <th>
+                        Preço
+                    </th>
+
+                    <th>
+                        Estoque
+                    </th>
+
+                    <th>
+                        Mínimo
+                    </th>
+
+                    <th>
+                        Ações
+                    </th>
+
+                </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                <tr th:each="p : ${produtos}">
+
+                    <td th:text="${p.id}">
+                        1
+                    </td>
+
+
+                    <td th:text="${p.nome}">
+                        Produto
+                    </td>
+
+
+                    <td class="price">
+
+                        R$
+
+                        <span th:text="${#numbers.formatDecimal(p.preco, 1, 2)}">
+                            0,00
+                        </span>
+
+                    </td>
+
+
+                    <td class="stock"
+                        th:text="${p.quantidade}">
+
+                        0
+
+                    </td>
+
+
+                    <td th:text="${p.estoqueMinimo}">
+                        0
+                    </td>
+
+
+                    <td>
+
+                        <a class="btn-edit"
+                           th:href="@{/produtos/editar/{id}(id=${p.id})}">
+
+                            Editar
+
+                        </a>
+
+
+                        <button type="button"
+                                class="btn-delete"
+                                data-bs-toggle="modal"
+                                th:data-bs-target="${'#modalDeletar' + p.id}">
+
+                            Excluir
+
+                        </button>
+
+
+                        <!-- MODAL DELETE -->
+
+                        <div class="modal fade"
+                             th:id="${'modalDeletar' + p.id}"
+                             tabindex="-1">
+
+                            <div class="modal-dialog modal-dialog-centered">
+
+                                <div class="modal-content">
+
+                                    <div class="modal-header">
+
+                                        <h5 class="modal-title">
+
+                                            Confirmar exclusão
+
+                                        </h5>
+
+                                        <button type="button"
+                                                class="btn-close btn-close-white"
+                                                data-bs-dismiss="modal">
+
+                                        </button>
+
+                                    </div>
+
+
+                                    <div class="modal-body">
+
+                                        Tem certeza que deseja excluir
+                                        o produto
+
+                                        <strong th:text="${p.nome}">
+                                            produto
+                                        </strong>?
+
+                                        <br><br>
+
+                                        <span style="color:#fca5a5">
+
+                                            Essa ação não poderá ser desfeita.
+
+                                        </span>
+
+                                    </div>
+
+
+                                    <div class="modal-footer">
+
+                                        <button type="button"
+                                                class="btn btn-cancel"
+                                                data-bs-dismiss="modal">
+
+                                            Cancelar
+
+                                        </button>
+
+
+                                        <a class="btn btn-confirm-delete"
+                                           th:href="@{/produtos/deletar/{id}(id=${p.id})}">
+
+                                            Excluir produto
+
+                                        </a>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </td>
+
+                </tr>
+
+
+                <!-- SEM PRODUTOS -->
+
+                <tr th:if="${#lists.isEmpty(produtos)}">
+
+                    <td colspan="6"
+                        class="empty">
+
+                        📦
+
+                        <br><br>
+
+                        Nenhum produto encontrado.
+
+                    </td>
+
+                </tr>
+
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+</main>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
+
+
+<script>
+
+    function fecharToast(elemento) {
+
+        const toast =
+            elemento.closest(".toast-custom");
+
+        toast.style.animation =
+            "toastOut .3s ease forwards";
+
+        setTimeout(() => {
+
+            toast.remove();
+
+        }, 300);
+
+    }
+
+
+    document.addEventListener("DOMContentLoaded", () => {
+
+        const toasts =
+            document.querySelectorAll(".toast-custom");
+
+
+        toasts.forEach(toast => {
+
+            setTimeout(() => {
+
+                toast.style.animation =
+                    "toastOut .3s ease forwards";
+
+
+                setTimeout(() => {
+
+                    toast.remove();
+
+                }, 300);
+
+            }, 5000);
+
+        });
+
+    });
+
+</script>
+
+
+</body>
+
+</html>

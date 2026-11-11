@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Dashboard | Sistema JY</title>
+
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+            rel="stylesheet">
+
+
+    <style>
+
+        /* =========================================
+           RESET
+        ========================================== */
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        /* =========================================
+           BODY
+        ========================================== */
+
+        body {
+
+            margin: 0;
+
+            min-height: 100vh;
+
+            font-family: "Segoe UI", Arial, sans-serif;
+
+            color: #e8eaf6;
+
+            background:
+
+                radial-gradient(
+                    circle at 10% 10%,
+                    rgba(37, 99, 235, 0.18),
+                    transparent 30%
+                ),
+
+                radial-gradient(
+                    circle at 90% 15%,
+                    rgba(124, 58, 237, 0.20),
+                    transparent 30%
+                ),
+
+                radial-gradient(
+                    circle at 50% 100%,
+                    rgba(59, 130, 246, 0.08),
+                    transparent 40%
+                ),
+
+                #050711;
+        }
+
+
+        /* =========================================
+           NAVBAR
+        ========================================== */
+
+        .navbar-custom {
+
+            min-height: 76px;
+
+            background:
+                rgba(5, 7, 17, 0.80) !important;
+
+            border-bottom:
+                1px solid rgba(139, 92, 246, 0.17);
+
+            backdrop-filter: blur(18px);
+
+            box-shadow:
+                0 10px 35px rgba(0, 0, 0, 0.18);
+        }
+
+
+        /* =========================================
+           BRAND
+        ========================================== */
+
+        .brand {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+
+            color: #ffffff !important;
+
+            text-decoration: none;
+
+            font-size: 18px;
+
+            font-weight: 700;
+        }
+
+
+        .brand-icon {
+
+            width: 42px;
+
+            height: 42px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            border-radius: 12px;
+
+            background:
+
+                linear-gradient(
+                    135deg,
+                    #2563eb,
+                    #4f46e5,
+                    #7c3aed
+                );
+
+            border:
+                1px solid rgba(255,255,255,0.18);
+
+            box-shadow:
+
+                0 0 28px rgba(79,70,229,0.30);
+
+            color: white;
+
+            font-weight: 800;
+
+            font-size: 17px;
+        }
+
+
+        .brand-name span {
+
+            background:
+
+                linear-gradient(
+                    90deg,
+                    #60a5fa,
+                    #a78bfa
+                );
+
+            -webkit-background-clip: text;
+
+            -webkit-text-fill-color: transparent;
+        }
+
+
+        /* =========================================
+           USER AREA
+        ========================================== */
+
+        .user-area {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 14px;
+        }
+
+
+        .user-info {
+
+            color: #737d94;
+
+            font-size: 12px;
+        }
+
+
+        .user-info strong {
+
+            color: #c7d2fe;
+
+            font-weight: 650;
+        }
+
+
+        .user-avatar {
+
+            width: 36px;
+
+            height: 36px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            border-radius: 50%;
+
+            color: white;
+
+            font-size: 13px;
+
+            font-weight: 700;
+
+            background:
+
+                linear-gradient(
+                    135deg,
+                    #2563eb,
+                    #7c3aed
+                );
+
+            border:
+
+                1px solid rgba(255,255,255,0.15);
+
+            box-shadow:
+
+                0 0 18px rgba(79,70,229,0.22);
+        }
+
+
+        /* =========================================
+           LOGOUT
+        ========================================== */
+
+        .logout-button {
+
+            color: #aeb8cc;
+
+            background:
+                rgba(255,255,255,0.035);
+
+            border:
+                1px solid rgba(255,255,255,0.10);
+
+            border-radius: 9px;
+
+            padding: 7px 15px;
+
+            font-size: 12px;
+
+            transition: 0.25s;
+        }
+
+
+        .logout-button:hover {
+
+            color: #ffffff;
+
+            background:
+                rgba(244,63,94,0.12);
+
+            border-color:
+                rgba(244,63,94,0.35);
+
+            box-shadow:
+                0 0 18px rgba(244,63,94,0.10);
+        }
+
+
+        /* =========================================
+           MAIN
+        ========================================== */
+
+        .main-container {
+
+            max-width: 1100px;
+
+            margin: 0 auto;
+
+            padding-top: 52px;
+
+            padding-bottom: 60px;
+        }
+
+
+        /* =========================================
+           HEADER
+        ========================================== */
+
+        .dashboard-header {
+
+            margin-bottom: 35px;
+        }
+
+
+        .dashboard-header h1 {
+
+            margin: 0 0 8px;
+
+            color: #ffffff;
+
+            font-size: 30px;
+
+            font-weight: 750;
+
+            letter-spacing: -0.7px;
+        }
+
+
+        .dashboard-header h1 span {
+
+            background:
+
+                linear-gradient(
+                    90deg,
+                    #3b82f6,
+                    #6366f1,
+                    #a855f7
+                );
+
+            -webkit-background-clip: text;
+
+            -webkit-text-fill-color: transparent;
+        }
+
+
+        .dashboard-header p {
+
+            margin: 0;
+
+            color: #68738a;
+
+            font-size: 14px;
+        }
+
+
+        /* =========================================
+           STATUS
+        ========================================== */
+
+        .status {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 8px;
+
+            margin-top: 18px;
+
+            padding: 7px 12px;
+
+            border-radius: 20px;
+
+            color: #a5b4fc;
+
+            background:
+                rgba(99,102,241,0.07);
+
+            border:
+                1px solid rgba(99,102,241,0.15);
+
+            font-size: 11px;
+
+            font-weight: 600;
+        }
+
+
+        .status-dot {
+
+            width: 7px;
+
+            height: 7px;
+
+            border-radius: 50%;
+
+            background: #6366f1;
+
+            box-shadow:
+                0 0 10px rgba(99,102,241,0.75);
+        }
+
+
+        /* =========================================
+           DASHBOARD CARDS
+        ========================================== */
+
+        .dashboard-card {
+
+            position: relative;
+
+            height: 100%;
+
+            padding: 28px;
+
+            border-radius: 19px;
+
+            background:
+
+                linear-gradient(
+                    145deg,
+                    rgba(17,24,39,0.88),
+                    rgba(7,10,22,0.93)
+                );
+
+            border:
+
+                1px solid rgba(139,92,246,0.16);
+
+            box-shadow:
+
+                0 25px 60px rgba(0,0,0,0.30),
+
+                inset 0 1px 0 rgba(255,255,255,0.035);
+
+            overflow: hidden;
+
+            transition: 0.3s;
+        }
+
+
+        /* linha brilhante */
+
+        .dashboard-card::before {
+
+            content: "";
+
+            position: absolute;
+
+            top: 0;
+
+            left: 8%;
+
+            width: 84%;
+
+            height: 1px;
+
+            background:
+
+                linear-gradient(
+                    90deg,
+                    transparent,
+                    #3b82f6,
+                    #8b5cf6,
+                    transparent
+                );
+
+            opacity: 0.75;
+        }
+
+
+        /* brilho interno */
+
+        .dashboard-card::after {
+
+            content: "";
+
+            position: absolute;
+
+            width: 160px;
+
+            height: 160px;
+
+            top: -100px;
+
+            right: -70px;
+
+            border-radius: 50%;
+
+            background: #4f46e5;
+
+            filter: blur(80px);
+
+            opacity: 0.09;
+
+            pointer-events: none;
+        }
+
+
+        .dashboard-card:hover {
+
+            transform: translateY(-5px);
+
+            border-color:
+                rgba(99,102,241,0.32);
+
+            box-shadow:
+
+                0 30px 70px rgba(0,0,0,0.38),
+
+                0 0 35px rgba(79,70,229,0.07);
+        }
+
+
+        /* =========================================
+           CARD ICON
+        ========================================== */
+
+        .card-icon {
+
+            width: 52px;
+
+            height: 52px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            margin-bottom: 22px;
+
+            border-radius: 14px;
+
+            color: white;
+
+            font-size: 20px;
+
+            font-weight: 700;
+
+            background:
+
+                linear-gradient(
+                    135deg,
+                    rgba(37,99,235,0.90),
+                    rgba(124,58,237,0.90)
+                );
+
+            border:
+
+                1px solid rgba(255,255,255,0.13);
+
+            box-shadow:
+
+                0 8px 25px rgba(79,70,229,0.20);
+        }
+
+
+        /* =========================================
+           CARD CONTENT
+        ========================================== */
+
+        .dashboard-card h3 {
+
+            margin-bottom: 9px;
+
+            color: #f8fafc;
+
+            font-size: 18px;
+
+            font-weight: 700;
+        }
+
+
+        .dashboard-card p {
+
+            min-height: 43px;
+
+            margin-bottom: 24px;
+
+            color: #69748b;
+
+            font-size: 13px;
+
+            line-height: 1.6;
+        }
+
+
+        /* =========================================
+           CARD BUTTON
+        ========================================== */
+
+        .card-button {
+
+            width: 100%;
+
+            height: 43px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 8px;
+
+            border-radius: 10px;
+
+            color: #ffffff;
+
+            text-decoration: none;
+
+            font-size: 12px;
+
+            font-weight: 700;
+
+            background:
+
+                linear-gradient(
+                    110deg,
+                    #2563eb,
+                    #4f46e5,
+                    #7c3aed
+                );
+
+            box-shadow:
+
+                0 8px 25px rgba(79,70,229,0.20);
+
+            transition: 0.25s;
+        }
+
+
+        .card-button:hover {
+
+            color: white;
+
+            transform: translateY(-1px);
+
+            box-shadow:
+
+                0 12px 30px rgba(79,70,229,0.32);
+        }
+
+
+        .arrow {
+
+            font-size: 15px;
+
+            transition: 0.2s;
+        }
+
+
+        .card-button:hover .arrow {
+
+            transform: translateX(4px);
+        }
+
+
+        /* =========================================
+           FOOTER
+        ========================================== */
+
+        .dashboard-footer {
+
+            margin-top: 45px;
+
+            padding-top: 20px;
+
+            text-align: center;
+
+            border-top:
+
+                1px solid rgba(255,255,255,0.05);
+
+            color: #465066;
+
+            font-size: 11px;
+        }
+
+
+        .dashboard-footer span {
+
+            background:
+
+                linear-gradient(
+                    90deg,
+                    #3b82f6,
+                    #8b5cf6
+                );
+
+            -webkit-background-clip: text;
+
+            -webkit-text-fill-color: transparent;
+
+            font-weight: 650;
+        }
+
+
+        /* =========================================
+           RESPONSIVE
+        ========================================== */
+
+        @media (max-width: 768px) {
+
+            .navbar-custom {
+
+                padding: 12px 0;
+            }
+
+
+            .user-info {
+
+                display: none;
+            }
+
+
+            .main-container {
+
+                padding:
+                    35px 20px 45px;
+            }
+
+
+            .dashboard-header h1 {
+
+                font-size: 25px;
+            }
+
+
+            .dashboard-card {
+
+                padding: 23px;
+            }
+
+        }
+
+    </style>
+
+
+</head>
+
+<body>
+
+<!-- =========================================
+     NAVBAR
+========================================== -->
+
+<nav class="navbar navbar-custom">
+
+
+    <div class="container">
+
+        <div class="d-flex align-items-center justify-content-between w-100">
+
+
+            <!-- BRAND -->
+
+            <a href="/home" class="brand">
+
+                <div class="brand-icon">
+
+                    &lt;/&gt;
+
+                </div>
+
+
+                <div class="brand-name">
+
+                    Sistema <span>SAEP</span>
+
+                </div>
+
+            </a>
+
+
+            <!-- USER -->
+
+            <div class="user-area">
+
+
+                <div class="user-avatar">
+
+                    U
+
+                </div>
+
+
+                <div class="user-info">
+
+                    Usuário:
+
+                    <strong th:text="${usuario.login}">
+                        Nome
+                    </strong>
+
+                </div>
+
+
+                <a
+                        href="/logout"
+                        class="btn logout-button">
+
+                    Sair
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+</nav>
+
+<!-- =========================================
+     MAIN
+========================================== -->
+
+<main class="container main-container">
+
+
+    <!-- HEADER -->
+
+    <div class="dashboard-header">
+
+        <h1>
+
+            Painel <span>Principal</span>
+
+        </h1>
+
+
+        <p>
+
+            Gerencie produtos e acompanhe o estoque do Sistema SAEP.
+
+        </p>
+
+
+        <div class="status">
+
+            <span class="status-dot"></span>
+
+            Sistema operacional
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================
+         CARDS
+    ========================================== -->
+
+    <div class="row g-4">
+
+
+        <!-- =====================================
+             PRODUTOS
+        ====================================== -->
+
+        <div class="col-md-6">
+
+            <div class="dashboard-card">
+
+
+                <div class="card-icon">
+
+                    P
+
+                </div>
+
+
+                <h3>
+
+                    Cadastro de Produtos
+
+                </h3>
+
+
+                <p>
+
+                    Cadastre novos produtos, altere informações
+                    e mantenha os dados do sistema organizados.
+
+                </p>
+
+
+                <a
+                        href="/cadastro-produto"
+                        class="card-button">
+
+                    Acessar Cadastro
+
+                    <span class="arrow">
+
+                    →
+
+                </span>
+
+                </a>
+
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================
+             ESTOQUE
+        ====================================== -->
+
+        <div class="col-md-6">
+
+            <div class="dashboard-card">
+
+
+                <div class="card-icon">
+
+                    E
+
+                </div>
+
+
+                <h3>
+
+                    Gestão de Estoque
+
+                </h3>
+
+
+                <p>
+
+                    Controle entradas e saídas, acompanhe
+                    movimentações e mantenha seu estoque atualizado.
+
+                </p>
+
+
+                <a
+                        href="/gestao-estoque"
+                        class="card-button">
+
+                    Acessar Estoque
+
+                    <span class="arrow">
+
+                    →
+
+                </span>
+
+                </a>
+
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+    <!-- =========================================
+         FOOTER
+    ========================================== -->
+
+    <div class="dashboard-footer">
+
+        Sistema <span>SAEP</span>
+        • Painel Administrativo
+
+    </div>
+
+
+</main>
+
+</body>
+
+</html>
