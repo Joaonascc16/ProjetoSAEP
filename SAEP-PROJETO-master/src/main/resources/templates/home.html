@@ -782,6 +782,7 @@
 
 
                 <form th:action="@{/logout}" method="post" class="m-0">
+                    <input type="hidden" name="_csrf" th:value="${_csrf}">
                     <button type="submit" class="btn logout-button">
                         Sair
                     </button>
