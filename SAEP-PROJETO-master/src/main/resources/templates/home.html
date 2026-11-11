@@ -775,17 +775,17 @@
                     <strong th:text="${usuario.login}">
                         Nome
                     </strong>
+                    <span class="ms-2" style="color:#818cf8"
+                          th:text="${usuario.perfil}">OPERADOR</span>
 
                 </div>
 
 
-                <a
-                        href="/logout"
-                        class="btn logout-button">
-
-                    Sair
-
-                </a>
+                <form th:action="@{/logout}" method="post" class="m-0">
+                    <button type="submit" class="btn logout-button">
+                        Sair
+                    </button>
+                </form>
 
             </div>
 
