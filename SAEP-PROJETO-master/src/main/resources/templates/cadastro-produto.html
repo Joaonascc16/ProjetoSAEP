@@ -1248,9 +1248,15 @@
                     <input type="number"
                            class="form-control"
                            th:field="*{quantidade}"
+                           th:readonly="${produto.id != null}"
                            placeholder="0"
                            min="0"
                            required>
+
+                    <small th:if="${produto.id != null}"
+                           style="color:#818cf8;font-size:11px;margin-top:6px">
+                        Para ajustar o saldo, registre uma entrada ou saída na Gestão de Estoque.
+                    </small>
 
                 </div>
 
