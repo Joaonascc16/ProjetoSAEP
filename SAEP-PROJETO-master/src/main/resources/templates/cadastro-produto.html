@@ -1006,6 +1006,7 @@
             </a>
 
             <form th:action="@{/logout}" method="post" class="m-0">
+                <input type="hidden" name="_csrf" th:value="${_csrf}">
                 <button type="submit" class="logout"
                         style="border:0;background:transparent;cursor:pointer">
                     Sair
@@ -1195,6 +1196,8 @@
         <form th:action="@{/produtos/salvar}"
               th:object="${produto}"
               method="post">
+
+            <input type="hidden" name="_csrf" th:value="${_csrf}">
 
 
             <input type="hidden"
@@ -1448,6 +1451,7 @@
 
                                             <form th:action="@{/produtos/deletar/{id}(id=${p.id})}"
                                                   method="post" class="m-0">
+                                                <input type="hidden" name="_csrf" th:value="${_csrf}">
                                                 <button type="submit" class="btn btn-confirm-delete">
                                                     Excluir produto
                                                 </button>
