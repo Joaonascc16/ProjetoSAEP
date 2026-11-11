@@ -1,0 +1,37 @@
+name: Maven CI
+
+on:
+  push:
+    branches:
+      - master
+      - "agent/**"
+  pull_request:
+    branches:
+      - master
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: SAEP-PROJETO-master
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+          cache-dependency-path: SAEP-PROJETO-master/pom.xml
+
+      - name: Grant Maven Wrapper permission
+        run: chmod +x mvnw
+
+      - name: Run tests and package
+        run: ./mvnw --batch-mode --no-transfer-progress clean verify

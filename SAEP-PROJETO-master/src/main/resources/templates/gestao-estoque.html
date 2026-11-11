@@ -598,6 +598,8 @@
                 th:action="@{/movimentacao}"
                 method="post">
 
+            <input type="hidden" name="_csrf" th:value="${_csrf}">
+
             <div class="form-grid">
 
                 <!-- PRODUTO -->

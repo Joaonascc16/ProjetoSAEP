@@ -2,8 +2,8 @@ package com.senai.SAEP.service;
 
 import com.senai.SAEP.entity.ProdutoEntity;
 import com.senai.SAEP.repository.ProdutoRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,8 +12,11 @@ import java.util.Optional;
 @Service
 public class ProdutoService {
 
-    @Autowired
-    private ProdutoRepository produtoRepository;
+    private final ProdutoRepository produtoRepository;
+
+    public ProdutoService(ProdutoRepository produtoRepository) {
+        this.produtoRepository = produtoRepository;
+    }
 
     public List<ProdutoEntity> listarTodos() {
         return produtoRepository.findAll();
@@ -28,6 +31,31 @@ public class ProdutoService {
 
     public void salvar(ProdutoEntity produto) {
         produtoRepository.save(produto);
+    }
+
+    /**
+     * Atualiza somente os dados cadastrais do produto.
+     * O bloqueio pessimista garante que uma movimentação concorrente termine
+     * antes da atualização; assim, o saldo mais recente nunca é sobrescrito
+     * por uma quantidade antiga enviada pelo formulário.
+     *
+     * @return true quando o produto existe e foi atualizado; false caso contrário.
+     */
+    @Transactional
+    public boolean atualizarDados(ProdutoEntity dadosAtualizados) {
+        if (dadosAtualizados == null || dadosAtualizados.getId() == null) {
+            return false;
+        }
+
+        return produtoRepository.findByIdForUpdate(dadosAtualizados.getId())
+                .map(produtoExistente -> {
+                    produtoExistente.setNome(dadosAtualizados.getNome());
+                    produtoExistente.setPreco(dadosAtualizados.getPreco());
+                    produtoExistente.setEstoqueMinimo(dadosAtualizados.getEstoqueMinimo());
+                    produtoRepository.save(produtoExistente);
+                    return true;
+                })
+                .orElse(false);
     }
 
     public Optional<ProdutoEntity> buscarPorId(Long id) {

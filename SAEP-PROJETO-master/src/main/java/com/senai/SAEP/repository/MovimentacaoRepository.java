@@ -11,4 +11,6 @@ public interface MovimentacaoRepository
     List<MovimentacaoEntity> findAllByOrderByDataDesc();
 
     List<MovimentacaoEntity> findByProdutoIdOrderByDataDesc(Long produtoId);
+
+    boolean existsByProduto_Id(Long produtoId);
 }

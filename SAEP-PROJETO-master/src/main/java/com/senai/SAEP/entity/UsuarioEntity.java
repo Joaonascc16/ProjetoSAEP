@@ -13,6 +13,10 @@ public class UsuarioEntity {
     private String login;
     private String senha;
 
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20)
+    private PerfilUsuario perfil = PerfilUsuario.OPERADOR;
+
     public UsuarioEntity() {}
 
     public Long getId() { return id; }
@@ -23,4 +27,13 @@ public class UsuarioEntity {
 
     public String getSenha() { return senha; }
     public void setSenha(String senha) { this.senha = senha; }
+
+    public PerfilUsuario getPerfil() {
+        // Registros criados antes da inclusão dos perfis permanecem como operadores.
+        return perfil == null ? PerfilUsuario.OPERADOR : perfil;
+    }
+
+    public void setPerfil(PerfilUsuario perfil) {
+        this.perfil = perfil == null ? PerfilUsuario.OPERADOR : perfil;
+    }
 }
