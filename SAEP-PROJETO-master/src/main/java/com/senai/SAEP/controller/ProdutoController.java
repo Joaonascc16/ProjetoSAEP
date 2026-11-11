@@ -54,18 +54,24 @@ public class ProdutoController {
             return "redirect:/login";
         }
 
+        boolean novoProduto = produto.getId() == null;
+        if (!novoProduto) {
+            ProdutoEntity produtoExistente = produtoService.buscarPorId(produto.getId()).orElse(null);
+            if (produtoExistente == null) {
+                model.addAttribute("erro", "Produto não encontrado para atualização.");
+                model.addAttribute("produtos", produtoService.listarTodos());
+                model.addAttribute("produto", produto);
+                model.addAttribute("usuario", usuarioDaSessao(session));
+                return "cadastro-produto";
+            }
+
+            // O saldo só pode ser alterado pelo fluxo de movimentações, que gera histórico.
+            produto.setQuantidade(produtoExistente.getQuantidade());
+        }
+
         String erroValidacao = validarProduto(produto);
         if (erroValidacao != null) {
             model.addAttribute("erro", erroValidacao);
-            model.addAttribute("produtos", produtoService.listarTodos());
-            model.addAttribute("produto", produto);
-            model.addAttribute("usuario", usuarioDaSessao(session));
-            return "cadastro-produto";
-        }
-
-        boolean novoProduto = produto.getId() == null;
-        if (!novoProduto && produtoService.buscarPorId(produto.getId()).isEmpty()) {
-            model.addAttribute("erro", "Produto não encontrado para atualização.");
             model.addAttribute("produtos", produtoService.listarTodos());
             model.addAttribute("produto", produto);
             model.addAttribute("usuario", usuarioDaSessao(session));
