@@ -202,7 +202,7 @@ public class ProdutoController {
         if (produto.getNome() == null || produto.getNome().isBlank()) {
             return "Informe o nome do produto.";
         }
-        if (produto.getPreco() == null || produto.getPreco() <= 0) {
+        if (produto.getPreco() == null || !Double.isFinite(produto.getPreco()) || produto.getPreco() <= 0) {
             return "O preço deve ser maior que zero.";
         }
         if (produto.getQuantidade() == null || produto.getQuantidade() < 0) {
