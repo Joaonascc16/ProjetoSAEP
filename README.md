@@ -67,6 +67,35 @@ VALUES ('admin', 'COLE_AQUI_O_HASH_BCRYPT', 'ADMINISTRADOR');
 
 Troque o login e a senha de exemplo antes de usar o sistema.
 
+## Inserts iniciais de usuários e produtos
+
+Depois que a aplicação criar as tabelas, você pode inserir dados de demonstração no banco. Os exemplos abaixo criam três usuários (um administrador e dois operadores) e três produtos. Rode os comandos uma única vez em um banco vazio ou altere os logins e nomes antes de executá-los novamente.
+
+Gere um hash BCrypt diferente para cada usuário. Substitua as senhas de exemplo por senhas fortes escolhidas por você e execute:
+
+```java
+var encoder = new org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder();
+System.out.println("admin-demo: " + encoder.encode("SENHA_FORTE_DO_ADMIN"));
+System.out.println("operador-demo-1: " + encoder.encode("SENHA_FORTE_DO_OPERADOR_1"));
+System.out.println("operador-demo-2: " + encoder.encode("SENHA_FORTE_DO_OPERADOR_2"));
+```
+
+Copie cada hash impresso para o usuário correspondente no comando SQL. Não grave as senhas originais na coluna `senha`.
+
+```sql
+INSERT INTO usuarios (login, senha, perfil) VALUES
+('admin-demo', 'COLE_AQUI_O_HASH_BCRYPT_DO_ADMIN', 'ADMINISTRADOR'),
+('operador-demo-1', 'COLE_AQUI_O_HASH_BCRYPT_DO_OPERADOR_1', 'OPERADOR'),
+('operador-demo-2', 'COLE_AQUI_O_HASH_BCRYPT_DO_OPERADOR_2', 'OPERADOR');
+
+INSERT INTO produtos (nome, preco, quantidade, estoque_minimo) VALUES
+('Teclado USB', 89.90, 15, 5),
+('Mouse óptico', 49.90, 20, 5),
+('Monitor 24 polegadas', 899.90, 8, 2);
+```
+
+Substitua todos os valores `COLE_AQUI...` por hashes BCrypt reais antes de executar o INSERT de usuários. Os IDs são gerados automaticamente pelo banco.
+
 ## Perfis de acesso
 
 - **OPERADOR:** pode consultar, cadastrar e atualizar produtos, além de registrar movimentações.
