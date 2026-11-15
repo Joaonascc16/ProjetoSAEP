@@ -132,7 +132,19 @@ Senhas armazenadas em texto puro em instalações antigas continuam funcionando:
 
 ## Testes
 
-Os testes utilizam H2 em memória e não dependem de um servidor MySQL.
+O projeto possui 22 testes automatizados (JUnit 5), que não dependem de um servidor MySQL:
+
+| Classe de teste | Testes | O que verifica |
+|---|---|---|
+| `MovimentacaoServiceTest` | 4 | Entrada e saída de estoque, bloqueio de saída acima do saldo, quantidade inválida e alerta de estoque baixo |
+| `ProdutoServiceTest` | 4 | Ordenação (Insertion Sort) por nome e preço, e atualização de dados preservando o saldo atual |
+| `UsuarioServiceTest` | 3 | Autenticação com BCrypt, rejeição de senha incorreta e migração de senha legada |
+| `ProdutoControllerTest` | 3 | Permissões por perfil (operador x administrador), bloqueio de exclusão com histórico e edição sem alterar o saldo |
+| `CsrfTokenManagerTest` | 3 | Geração, reaproveitamento e validação do token CSRF por sessão |
+| `CsrfProtectionConfigTest` | 4 | Interceptor CSRF: métodos seguros liberados e métodos de escrita bloqueados sem token válido |
+| `SaepApplicationTests` | 1 | Carregamento completo do contexto Spring com banco H2 em memória |
+
+Os testes de serviço e de controller usam Mockito (sem banco de dados). Apenas o `SaepApplicationTests` usa o H2 em memória, configurado em `src/test/resources/application-test.properties`.
 
 Windows:
 
@@ -145,3 +157,5 @@ Linux ou macOS:
 ```bash
 ./mvnw clean verify
 ```
+
+O repositório também possui integração contínua (GitHub Actions, `.github/workflows/maven.yml`), que executa `./mvnw clean verify` com Java 21 a cada push na `master` e em cada pull request.
